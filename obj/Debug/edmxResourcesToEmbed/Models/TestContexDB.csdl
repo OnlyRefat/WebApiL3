@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="myDBModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Semester">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Cgpa" Type="Double" Nullable="false" />
+    <Property Name="StudentId" Type="Int32" Nullable="false" />
+    <Property Name="SemesterId" Type="Int32" />
+    <NavigationProperty Name="SemesterNo" Relationship="Self.FK_Semester_SemesterNo" FromRole="Semester" ToRole="SemesterNo" />
+    <NavigationProperty Name="Student" Relationship="Self.FK_Semester_Student" FromRole="Semester" ToRole="Student" />
+  </EntityType>
+  <EntityType Name="SemesterNo">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="20" FixedLength="true" Unicode="true" />
+    <NavigationProperty Name="Semesters" Relationship="Self.FK_Semester_SemesterNo" FromRole="SemesterNo" ToRole="Semester" />
+  </EntityType>
+  <EntityType Name="Student">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" />
+    <Property Name="Name" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="Semesters" Relationship="Self.FK_Semester_Student" FromRole="Student" ToRole="Semester" />
+  </EntityType>
+  <Association Name="FK_Semester_SemesterNo">
+    <End Role="SemesterNo" Type="Self.SemesterNo" Multiplicity="0..1" />
+    <End Role="Semester" Type="Self.Semester" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="SemesterNo">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Semester">
+        <PropertyRef Name="SemesterId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Semester_Student">
+    <End Role="Student" Type="Self.Student" Multiplicity="1" />
+    <End Role="Semester" Type="Self.Semester" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Student">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Semester">
+        <PropertyRef Name="StudentId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="myDBEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Semesters" EntityType="Self.Semester" />
+    <EntitySet Name="SemesterNoes" EntityType="Self.SemesterNo" />
+    <EntitySet Name="Students" EntityType="Self.Student" />
+    <AssociationSet Name="FK_Semester_SemesterNo" Association="Self.FK_Semester_SemesterNo">
+      <End Role="SemesterNo" EntitySet="SemesterNoes" />
+      <End Role="Semester" EntitySet="Semesters" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Semester_Student" Association="Self.FK_Semester_Student">
+      <End Role="Student" EntitySet="Students" />
+      <End Role="Semester" EntitySet="Semesters" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
